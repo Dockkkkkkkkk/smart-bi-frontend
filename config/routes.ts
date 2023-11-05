@@ -5,7 +5,8 @@ export default [
     routes: [{ name: '登录', path: '/user/login', component: './User/Login' }],
   },
   { path: '/', redirect: '/add_chart' },
-  { path: '/add_chart', name: '智能分析', icon: 'barChart', component: './AddChart' },
+  { path: '/add_chart', name: '智能分析', icon: 'AreaChartOutlined', component: './AddChart' },
+  { path: '/my_chart', name: '图表管理', icon: 'FolderOpenOutlined', component: './MyChart' },
   {
     path: '/admin',
     name: '管理页',
@@ -16,7 +17,5 @@ export default [
       { path: '/admin/sub-page', name:'二级菜单', component: './Admin' },
     ],
   },
-  { name: '查询表格', icon: 'table', path: '/list', component: './TableList' },
-  { path: '/', redirect: '/welcome' },
   { path: '*', layout: false, component: './404' },
 ];

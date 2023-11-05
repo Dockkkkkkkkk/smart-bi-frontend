@@ -88,7 +88,7 @@ export default (props: any) => {
   "colorWeak": false,
   "title": "六道BI",
   "pwa": true,
-  "logo": "https://gw.alipayobjects.com/zos/rmsportal/KDpgvguMpGfqaHPjicRK.svg",
+  "logo": "/favicon.ico",
   "iconfontUrl": "",
   "token": {}
 };
