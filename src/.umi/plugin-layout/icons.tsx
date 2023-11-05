@@ -3,5 +3,6 @@
 // DO NOT CHANGE IT MANUALLY!
 import AreaChartOutlined from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ant-design/icons/es/icons/AreaChartOutlined';
 import FolderOpenOutlined from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ant-design/icons/es/icons/FolderOpenOutlined';
+import BarChartOutlined from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ant-design/icons/es/icons/BarChartOutlined';
 import CrownOutlined from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ant-design/icons/es/icons/CrownOutlined';
-export default { AreaChartOutlined, FolderOpenOutlined, CrownOutlined };
+export default { AreaChartOutlined, FolderOpenOutlined, BarChartOutlined, CrownOutlined };
