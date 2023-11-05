@@ -7,7 +7,7 @@ import axios, {
   type AxiosResponse,
   type AxiosError,
 } from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/axios';
-import useUmiRequest, { UseRequestProvider } from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ahooksjs/use-request';
+import useUmiRequest, { UseRequestProvider } from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@umijs/plugins/node_modules/@ahooksjs/use-request';
 import { ApplyPluginsType } from 'umi';
 import { getPluginManager } from '../core/plugin';
 
@@ -26,7 +26,7 @@ import {
   PaginatedOptionsWithFormat,
   PaginatedParams,
   PaginatedResult,
-} from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@ahooksjs/use-request/es/types';
+} from 'C:/WorkSpace/VS_WorkSpace/bi-frontend-main/node_modules/@umijs/plugins/node_modules/@ahooksjs/use-request/es/types';
 
 type ResultWithData< T = any > = { data?: T; [key: string]: any };
 
