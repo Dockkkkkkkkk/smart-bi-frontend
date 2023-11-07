@@ -122,6 +122,14 @@ declare namespace API {
     id?: number;
   };
 
+  type genChartByAiAsyncMqUsingPOSTParams = {
+    biz?: string;
+    chartData?: string;
+    chartType?: string;
+    goal?: string;
+    name?: string;
+  };
+
   type genChartByAiAsyncUsingPOSTParams = {
     biz?: string;
     chartData?: string;

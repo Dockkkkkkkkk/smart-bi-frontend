@@ -6,8 +6,10 @@ export default [
   },
   { path: '/', redirect: '/add_chart' },
   { path: '/add_chart', name: '智能分析', icon: 'AreaChartOutlined', component: './AddChart' },
+  { path: '/add_chart_async', name: '智能分析（异步1）', icon: 'barChart', component: './AddChartAsync' },
+  { path: '/add_chart_async_mq', name: '智能分析（异步2）', icon: 'ApartmentOutlined', component: './AddChartAsyncMq' },
   { path: '/my_chart', name: '图表管理', icon: 'FolderOpenOutlined', component: './MyChart' },
-  { path: '/add_chart_async', name: '智能分析（异步）', icon: 'barChart', component: './AddChartAsync' },
+  
   {
     path: '/admin',
     name: '管理页',
