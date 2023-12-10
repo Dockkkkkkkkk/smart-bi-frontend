@@ -73,7 +73,8 @@ const AddChartAsync: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item name="file" label="原始数据">
-                <Upload name="file" maxCount={1}>
+                <Upload name="file" maxCount={1} accept=".csv,.xls,.xlsx,.json,.txt,.xml,.sql"
+                action="/uploadExcel">
                   <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
                 </Upload>
               </Form.Item>
@@ -81,7 +82,7 @@ const AddChartAsync: React.FC = () => {
               <Form.Item wrapperCol={{ span: 16, offset: 4 }}>
                 <Space>
                   <Button type="primary" htmlType="submit" loading={submitting} disabled={submitting}>
-                    提交
+                  Just do it
                   </Button>
                   <Button htmlType="reset">重置</Button>
                 </Space>

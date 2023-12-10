@@ -4,6 +4,7 @@ import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Sp
 import TextArea from 'antd/es/input/TextArea';
 import React, { useState } from 'react';
 import ReactECharts from 'echarts-for-react';
+import { getInitialState } from '@/app';
 
 
 /**
@@ -14,6 +15,7 @@ const AddChart: React.FC = () => {
   const [chart, setChart] = useState<API.BiResponse>();
   const [option, setOption] = useState<any>();
   const [submitting, setSubmitting] = useState<boolean>(false);
+  getInitialState();
 
   /**
    * 提交
@@ -84,7 +86,8 @@ const AddChart: React.FC = () => {
                 />
               </Form.Item>
               <Form.Item name="file" label="原始数据">
-                <Upload name="file" maxCount={1}>
+                <Upload name="file" maxCount={1} accept=".csv,.xls,.xlsx,.json,.txt,.xml,.sql"
+                action="/uploadExcel">
                   <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
                 </Upload>
               </Form.Item>
@@ -92,7 +95,7 @@ const AddChart: React.FC = () => {
               <Form.Item wrapperCol={{ span: 16, offset: 4 }}>
                 <Space>
                   <Button type="primary" htmlType="submit" loading={submitting} disabled={submitting}>
-                    提交
+                    Just do it
                   </Button>
                   <Button htmlType="reset">重置</Button>
                 </Space>

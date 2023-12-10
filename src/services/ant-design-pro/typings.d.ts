@@ -5,7 +5,7 @@ declare namespace API {
   type CurrentUser = {
     userName?: string;
     userAvatar?: string;
-    userid?: string;
+    userId?: string;
     email?: string;
     signature?: string;
     title?: string;
@@ -21,6 +21,15 @@ declare namespace API {
     };
     address?: string;
     phone?: string;
+  };
+
+  type RegisterResult = number;
+
+  type RegisterParams = {
+    userAccount?: string;
+    userPassword?: string;
+    checkPassword?: string;
+    type?: string;
   };
 
   type LoginResult = {

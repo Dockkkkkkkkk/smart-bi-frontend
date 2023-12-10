@@ -9,12 +9,29 @@ import {
   LoginForm,
   ProFormText
 } from '@ant-design/pro-components';
+import {Alert, Divider, message, Space, Tabs} from 'antd';
 import { useEmotionCss } from '@ant-design/use-emotion-css';
 import { Helmet, history, useModel } from '@umijs/max';
-import { Tabs, message } from 'antd';
 import React, { useEffect, useState } from 'react';
 import { flushSync } from 'react-dom';
 import Settings from '../../../../config/defaultSettings';
+
+const LoginMessage: React.FC<{
+  content: string;
+}> = ({content}) => (
+  <Alert
+    style={{
+      marginBottom: 24,
+    }}
+    message={content}
+    type="error"
+    showIcon
+  />
+);
+
+const sleep = (ms: number): Promise<void> => {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
 const Login: React.FC = () => {
   const [type, setType] = useState<string>('account');
@@ -38,24 +55,24 @@ const Login: React.FC = () => {
   })
 
   const fetchUserInfo = async () => {
-    const userInfo = await getLoginUserUsingGET();
+    const userInfo = await initialState?.fetchUserInfo?.();
     if (userInfo) {
-      flushSync(() => {
-        setInitialState((s) => ({
-          ...s,
-          currentUser: userInfo,
-        }));
-      });
+      await setInitialState((s) => ({...s, currentUser: userInfo}));
     }
   };
+
   const handleSubmit = async (values: API.UserLoginRequest) => {
     try {
       // 登录
       const res = await userLoginUsingPOST(values);
       if (res.code === 0) {
         const defaultLoginSuccessMessage = '登录成功！';
-        message.success(defaultLoginSuccessMessage);
-        await fetchUserInfo();
+        // message.success() 返回一个 Promise
+        const successMessagePromise = message.success(defaultLoginSuccessMessage);
+        // fetchUserInfo() 返回一个 Promise
+        const fetchUserInfoPromise = fetchUserInfo();
+        // 等待所有 Promise 执行完毕
+        await Promise.all([successMessagePromise, fetchUserInfoPromise]);
         const urlParams = new URL(window.location.href).searchParams;
         history.push(urlParams.get('redirect') || '/');
         return;
