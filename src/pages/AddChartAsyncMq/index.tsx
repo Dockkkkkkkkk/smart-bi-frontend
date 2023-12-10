@@ -1,9 +1,10 @@
 import { genChartByAiAsyncMqUsingPOST } from '@/services/bi/chartController';
 import { UploadOutlined } from '@ant-design/icons';
-import { Button, Card, Form, Input, message, Select, Space, Upload } from 'antd';
+import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload,Table } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useState } from 'react';
+import * as XLSX from 'xlsx';
 
 
 /**
@@ -13,7 +14,8 @@ import React, { useState } from 'react';
 const AddChartAsync: React.FC = () => {
   const [form] = useForm();
   const [submitting, setSubmitting] = useState<boolean>(false);
-
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [fileData, setFileData] = useState([]);
   /**
    * 提交
    * @param values
@@ -44,10 +46,31 @@ const AddChartAsync: React.FC = () => {
     setSubmitting(false);
   };
 
-  
+  const handleChange = (info) => {
+    if (info.file.status === 'done') {
+      setUploadedFile(info.file.response); // 这里假设上传成功后服务端返回文件信息
 
+      // 读取上传的 Excel 文件
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+
+        // 获取第一个工作表的数据
+        const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        setFileData(sheetData);
+      };
+      reader.readAsBinaryString(info.file.originFileObj);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} 文件上传失败.`);
+    }
+  };
+
+  const columns = fileData.length > 0 ? Object.keys(fileData[0]).map((key) => ({ title: key, dataIndex: key })) : [];
   return (
     <div className="add-chart-async">
+      <Row gutter={24}>
+        <Col span={12}>
           <Card title="智能分析">
             <Form form={form} name="addChart" labelAlign="left" labelCol={{ span: 4 }}
                   wrapperCol={{ span: 16 }} onFinish={onFinish} initialValues={{}}>
@@ -74,7 +97,7 @@ const AddChartAsync: React.FC = () => {
               </Form.Item>
               <Form.Item name="file" label="原始数据">
                 <Upload name="file" maxCount={1} accept=".csv,.xls,.xlsx,.json,.txt,.xml,.sql"
-                action="/uploadExcel">
+                action="/uploadExcel" onChange={handleChange}>
                   <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
                 </Upload>
               </Form.Item>
@@ -89,6 +112,18 @@ const AddChartAsync: React.FC = () => {
               </Form.Item>
             </Form>
           </Card>
+        </Col>
+        <Col span={12}>
+          <Card title="数据预览">
+            {uploadedFile ? (
+              <Table dataSource={fileData} columns={columns} />
+            ) : (
+              <div>请先在左侧进行提交</div>
+            )}
+            <Spin spinning={submitting}/>
+          </Card>
+        </Col>
+      </Row> 
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import { genChartByAiUsingPOST } from '@/services/bi/chartController';
 import { UploadOutlined } from '@ant-design/icons';
-import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload} from 'antd';
+import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload,Table} from 'antd';
 import TextArea from 'antd/es/input/TextArea';
 import React, { useState } from 'react';
 import ReactECharts from 'echarts-for-react';
 import { getInitialState } from '@/app';
+import * as XLSX from 'xlsx';
 
 
 /**
@@ -15,6 +16,8 @@ const AddChart: React.FC = () => {
   const [chart, setChart] = useState<API.BiResponse>();
   const [option, setOption] = useState<any>();
   const [submitting, setSubmitting] = useState<boolean>(false);
+  const [uploadedFile, setUploadedFile] = useState(null);
+  const [fileData, setFileData] = useState([]);
   getInitialState();
 
   /**
@@ -55,7 +58,28 @@ const AddChart: React.FC = () => {
     setSubmitting(false);
   };
 
-  
+  const handleChange = (info) => {
+    if (info.file.status === 'done') {
+      setUploadedFile(info.file.response); // 这里假设上传成功后服务端返回文件信息
+
+      // 读取上传的 Excel 文件
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const data = e.target.result;
+        const workbook = XLSX.read(data, { type: 'binary' });
+
+        // 获取第一个工作表的数据
+        const sheetData = XLSX.utils.sheet_to_json(workbook.Sheets[workbook.SheetNames[0]]);
+        setFileData(sheetData);
+      };
+      reader.readAsBinaryString(info.file.originFileObj);
+    } else if (info.file.status === 'error') {
+      message.error(`${info.file.name} 文件上传失败.`);
+    }
+  };
+
+  const columns = fileData.length > 0 ? Object.keys(fileData[0]).map((key) => ({ title: key, dataIndex: key })) : [];
+
 
   return (
     <div className="add-chart">
@@ -87,7 +111,7 @@ const AddChart: React.FC = () => {
               </Form.Item>
               <Form.Item name="file" label="原始数据">
                 <Upload name="file" maxCount={1} accept=".csv,.xls,.xlsx,.json,.txt,.xml,.sql"
-                action="/uploadExcel">
+                action="/uploadExcel" onChange={handleChange}>
                   <Button icon={<UploadOutlined />}>上传 CSV 文件</Button>
                 </Upload>
               </Form.Item>
@@ -113,6 +137,15 @@ const AddChart: React.FC = () => {
             {
               option ? <ReactECharts option={option} /> : <div>请先在左侧进行提交</div>
             }
+            <Spin spinning={submitting}/>
+          </Card>
+          <Divider />
+          <Card title="数据预览">
+            {uploadedFile ? (
+              <Table dataSource={fileData} columns={columns} />
+            ) : (
+              <div>请先在左侧进行提交</div>
+            )}
             <Spin spinning={submitting}/>
           </Card>
         </Col>
