@@ -25,7 +25,7 @@ const Footer: React.FC = () => {
           blankTarget: true,
         },
         {
-          key: '六道BI',
+          key: '六道BI01',
           title: '六道BI',
           href: 'https://ant.design',
           blankTarget: true,

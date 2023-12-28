@@ -1,11 +1,12 @@
 import { genChartByAiAsyncMqUsingPOST } from '@/services/bi/chartController';
 import { UploadOutlined } from '@ant-design/icons';
-import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload,Table } from 'antd';
+import {Button, Card, Col, Divider, Form, Input, message, Row, Select, Space, Spin, Upload,Table,notification } from 'antd';
 import { useForm } from 'antd/es/form/Form';
 import TextArea from 'antd/es/input/TextArea';
-import React, { useState } from 'react';
+import React, { useEffect,useState,useRef } from 'react';
 import * as XLSX from 'xlsx';
 
+const baseURL='http://localhost:8080';
 
 /**
  * 添加图表页面(异步)
@@ -16,6 +17,19 @@ const AddChartAsync: React.FC = () => {
   const [submitting, setSubmitting] = useState<boolean>(false);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [fileData, setFileData] = useState([]);
+  // const [pollingId, setPollingId] = useState<NodeJS.Timeout | null>(null);
+  // const pollingIdRef = useRef<NodeJS.Timeout | null>(null);
+  const pollCountRef = useRef<number>(0);
+
+  // useEffect(() => {
+  //   // 组件卸载时清除定时器
+  //   return () => {
+  //     if (pollingIdRef.current) {
+  //       clearInterval(pollingIdRef.current);
+  //       pollingIdRef.current = null;
+  //     }
+  //   };
+  // }, []);
   /**
    * 提交
    * @param values
@@ -38,12 +52,55 @@ const AddChartAsync: React.FC = () => {
       } else {
         message.success('分析任务已提交，请在图表管理中查看');
         form.resetFields();
+        const chartId=res.data.chartId;
+        const id = setInterval(() => checkTask(chartId,id), 6000); // 每 5 秒轮询一次
+        //setPollingId(id);
       }
     } catch (e: any) {
       message.error('分析失败，' + e.message);
       console.log('分析失败，' + e.message);
     }
     setSubmitting(false);
+  };
+
+  const checkTask = async (chartId: number,intervalId:number) => {
+    // 设置最大轮询次数
+    const maxPollCount = 20;
+    let name = '';
+    const pollFunction = async () => {
+      try {
+        // 发送请求检查任务状态，带上 chartId
+        const response = await fetch(baseURL + `/api/chart/gen/check?chartId=${chartId}`);
+        const result = await response.json();
+        name = result.data.name;
+        // 如果任务完成，弹出通知
+        if (result.data.status === 'succeed') {
+          notification.success({ message: name + '--分析完成，请至图标管理查看' });
+          clearInterval(intervalId);
+          //pollingIdRef.current = null;
+          pollCountRef.current=0;
+        } else {
+          // 如果未完成但已达到最大轮询次数，弹出通知
+          if (pollCountRef.current >= maxPollCount) {
+            notification.warning({ message: name + '--分析超时，请重试' });
+            clearInterval(intervalId);
+            pollCountRef.current=0;
+          } else {
+            // 设置新的定时器，每 5 秒执行一次轮询
+            //setTimeout(pollFunction, 5000);
+          }
+        }
+        // 增加轮询计数器
+        pollCountRef.current++;
+      } catch (error) {
+        console.error('Error checking task:', error);
+        notification.error({ message: name + '--分析出错了，请重试' });
+        clearInterval(intervalId);
+        pollCountRef.current=0;
+      }
+    };
+    // 初始化时执行一次轮询
+    pollFunction();
   };
 
   const handleChange = (info) => {

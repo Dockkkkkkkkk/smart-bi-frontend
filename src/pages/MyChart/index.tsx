@@ -51,6 +51,15 @@ const MyChartPage: React.FC = () => {
     setLoading(false);
   };
 
+  const isValidJSON=(str: string):boolean =>{
+    try {
+      JSON.parse(str);
+      return true;
+    } catch (error) {
+      return false;
+    }
+  };
+
   useEffect(() => {
     loadData();
   }, [searchParams]);
@@ -123,7 +132,8 @@ const MyChartPage: React.FC = () => {
                     <div style={{ marginBottom: 16 }} />
                     <p>{'分析目标：' + item.goal}</p>
                     <div style={{ marginBottom: 16 }} />
-                    <ReactECharts option={item.genChart && JSON.parse(item.genChart)} />
+                    <ReactECharts option={item.genChart && isValidJSON(item.genChart) ? JSON.parse(item.genChart) : null} />
+
                   </>
                 }
                 {
