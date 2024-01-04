@@ -79,7 +79,12 @@ const AddChartAsync: React.FC = () => {
           clearInterval(intervalId);
           //pollingIdRef.current = null;
           pollCountRef.current=0;
-        } else {
+        } else if(result.data.status === 'failed'){
+          console.error('Error checking task:', error);
+          notification.error({ message: name + '--分析出错了，请重试' });
+          clearInterval(intervalId);
+          pollCountRef.current=0;
+        }else {
           // 如果未完成但已达到最大轮询次数，弹出通知
           if (pollCountRef.current >= maxPollCount) {
             notification.warning({ message: name + '--分析超时，请重试' });
